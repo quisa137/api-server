@@ -4,6 +4,5 @@
 /maven-archiver/
 /maven-status/
 /test-classes/
-/lib/
 *.jar
 classpath.txt
