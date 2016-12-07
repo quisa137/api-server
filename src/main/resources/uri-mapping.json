@@ -1,0 +1,10 @@
+{
+	"users":{
+		"all":"users"
+	},
+	"tokens":{
+		"get":"tokenVerify",
+		"post":"tokenIssue",
+		"delete":"tokenExpirer"
+	}
+}
