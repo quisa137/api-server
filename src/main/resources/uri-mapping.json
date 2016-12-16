@@ -1,7 +1,5 @@
 {
-	"users":{
-		"all":"users"
-	},
+	"users":"users",
 	"tokens":{
 		"get":"tokenVerify",
 		"post":"tokenIssue",

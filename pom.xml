@@ -70,6 +70,11 @@
       <artifactId>log4j-core</artifactId>
       <version>2.3</version>
     </dependency>
+    <dependency>
+    <groupId>org.elasticsearch.client</groupId>
+    <artifactId>transport</artifactId>
+    <version>5.1.1</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -146,4 +151,5 @@
       </plugin>
     </plugins>
   </build>
+  <description>데이타 분석 솔루션 전용 웹 API 미들웨어</description>
 </project>

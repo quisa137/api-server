@@ -1,12 +1,17 @@
 package com.jindata.apiserver.core;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 @Component
 public class ServiceDispatcher {
@@ -20,33 +25,39 @@ public class ServiceDispatcher {
     protected Logger logger = LogManager.getLogger(this.getClass());
     
     public static ApiRequest dispatch(Map<String,String> requestMap) {
+        
         String serviceUri = requestMap.get("REQUEST_URI");
         String beanName = null;
         
-        if(serviceUri == null) {
-            beanName = "notFound";
-        }
+        JsonObject urimap = (JsonObject) springContext.getBean("uriMap");
         
-        if(serviceUri.startsWith("/tokens")) {
-            String httpMethod = requestMap.get("REQUEST_METHOD");
-            
-            switch (httpMethod) {
-            case "POST":
-                beanName = "tokenIssue";
-                break;
-            case "GET":
-                beanName = "tokenVerify";
-                break;
-            case "DELETE":
-                beanName = "tokenExpirer";
-                break;
-            default:
-                beanName = "notFound";
+        Iterator<Entry<String, JsonElement>> i =urimap.entrySet().iterator();
+        
+        while(i.hasNext()) {
+            Entry<String, JsonElement> e = i.next();
+            if(serviceUri.startsWith("/"+e.getKey())){
+                String httpMethod = requestMap.get("REQUEST_METHOD").toLowerCase();
+                JsonElement je = e.getValue();
+                if(je.isJsonObject()){
+                    JsonObject obj = je.getAsJsonObject();
+                    
+                    if(obj.has(httpMethod)){
+                        beanName = obj.get(httpMethod).getAsString();
+                    }else if(obj.has("default")){
+                        beanName = obj.get("default").getAsString();
+                    }else{
+                        beanName = "notFound";
+                    }
+                }else if(je.isJsonPrimitive()){
+                    beanName = je.getAsString();
+                }else{
+                    beanName = "notFound";
+                }
                 break;
             }
-        } else if (serviceUri.startsWith("/users")){
-            beanName = "users";
-        } else {
+        }
+
+        if(serviceUri == null || beanName == null) {
             beanName = "notFound";
         }
         
