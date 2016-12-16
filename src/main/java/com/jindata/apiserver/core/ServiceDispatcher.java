@@ -1,5 +1,6 @@
 package com.jindata.apiserver.core;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,9 +30,8 @@ public class ServiceDispatcher {
         String serviceUri = requestMap.get("REQUEST_URI");
         String beanName = null;
         
-        JsonObject urimap = (JsonObject) springContext.getBean("uriMap");
-        
-        Iterator<Entry<String, JsonElement>> i =urimap.entrySet().iterator();
+        ArrayList<Entry<String, JsonElement>> urimap = (ArrayList<Entry<String, JsonElement>>) springContext.getBean("uriMap");
+        Iterator<Entry<String, JsonElement>> i =urimap.iterator();
         
         while(i.hasNext()) {
             Entry<String, JsonElement> e = i.next();
