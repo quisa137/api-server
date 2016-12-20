@@ -1,8 +1,0 @@
-/classes/
-/generated-sources/
-/lib/
-/maven-archiver/
-/maven-status/
-/test-classes/
-*.jar
-classpath.txt

@@ -22,9 +22,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 @Configuration
-@ImportResource("classpath:spring/hsqlApplicationContext.xml")
-@ComponentScan("com.jindata.apiserver, com.jindata.apiserver.core, com.jindata.apiserver.service")
 @PropertySource("classpath:api-server.properties")
+@PropertySource("classpath:jdbc.properties")
+@ImportResource("classpath:spring/mysqlApplicationContext.xml")
+@ComponentScan("com.jindata.apiserver, com.jindata.apiserver.core, com.jindata.apiserver.service")
 public class ApiServerConfig {
     @Value("${boss.thread.count}")
     private int bossThreadCount;
@@ -62,10 +63,7 @@ public class ApiServerConfig {
             try {
                 JsonElement jelement = new JsonParser().parse(new InputStreamReader(getClass().getResourceAsStream(uriMapperPath)));
                 uriList = new ArrayList<>(jelement.getAsJsonObject().entrySet());
-                
                 Collections.sort(uriList,new StringLengthComparator());
-                
-                
             } catch (JsonIOException | JsonSyntaxException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
