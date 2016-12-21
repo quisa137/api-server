@@ -18,7 +18,6 @@
           <property name="username" value="${jdbc.username}"/>
           <property name="password" value="${jdbc.password}"/>
         </bean>
-        <context:property-placeholder location="jdbc.properties"/>
         
         <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
             <property name="dataSource" ref="dataSource" />
@@ -30,4 +29,8 @@
         <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
             <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
         </bean>
+        
+        <jdbc:initialize-database>
+          <jdbc:script encoding="UTF-8" location="classpath:db/sql/create-table.sql"/>
+        </jdbc:initialize-database>
 </beans>

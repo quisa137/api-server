@@ -44,5 +44,12 @@ public abstract class ApiRequestTemplate implements ApiRequest {
     public JsonObject getApiResult() {
         return this.apiResult;
     }
-
+    protected void sendSuccess() {
+        this.apiResult.addProperty("resultCode", "200");
+        this.apiResult.addProperty("message", "Success");
+    }
+    protected void sendError(int httpCode,String message) {
+        this.apiResult.addProperty("resultCode", Integer.toString(httpCode));
+        this.apiResult.addProperty("message", message);
+    }
 }

@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
 
 import com.jindata.apiserver.core.ApiRequestTemplate;
 
-@Service("users")
+@Service("userInfo")
 @Scope("prototype")
 public class UserInfo extends ApiRequestTemplate {
     @Autowired
