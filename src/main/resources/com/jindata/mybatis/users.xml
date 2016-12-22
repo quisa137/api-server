@@ -2,11 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="users">
 	<select id="userInfoByEmail" parameterType="map" resultType="map">
-		select USERNO, USERID, PASSWORD from NETTY_EXAMPLE_DB.USERS where USERID = #{email}
+		select USERNO, username, email, PASSWORD from `api-server`.users where email = #{email}
 	</select>
 
 	<select id="userInfoByPassword" parameterType="map" resultType="map">
-		select USERID, USERID, PASSWORD from NETTY_EXAMPLE_DB.USERS where userNo = #{userNo} and password = #{password}
+		select USERID, username, email, PASSWORD from `api-server`.users where userno = #{userNo} and password = #{password}
 	</select>
   
     <insert id="userCreate" parameterType="com.jindata.apiserver.service.dto.User" flushCache="true" statementType="PREPARED">
