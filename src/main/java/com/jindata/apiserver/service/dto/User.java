@@ -1,12 +1,12 @@
 package com.jindata.apiserver.service.dto;
 
-public class Users {
+public class User {
     private int userno;
     private String username;
     private String password;
     private String email;
     
-    public Users() {
+    public User() {
     }
 
     /**

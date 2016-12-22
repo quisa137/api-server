@@ -22,7 +22,7 @@ public class TokenVerify extends ApiRequestTemplate {
         // TODO Auto-generated constructor stub
     }
 
-    public void requestParamValidation() throws RequestParamException {
+    public void requestParamValidation(HTTP_METHOD method) throws RequestParamException {
         if(StringUtils.isEmpty(this.reqData.get("token"))) {
             throw new RequestParamException("token이 없습니다");
         }
@@ -34,9 +34,8 @@ public class TokenVerify extends ApiRequestTemplate {
             conn = helper.getConnection();
             String tokenString = conn.get(this.reqData.get("token"));
             if(tokenString == null) {
-                this.apiResult.addProperty("resultCode", "404");
-                this.apiResult.addProperty("message", "not found");
-            }else{
+                this.sendNotFound();
+            } else {
                 Gson gson = new Gson();
                 JsonObject token = gson.fromJson(tokenString, JsonObject.class);
                 

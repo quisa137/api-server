@@ -5,7 +5,13 @@ import com.jindata.apiserver.service.RequestParamException;
 import com.jindata.apiserver.service.ServiceException;
 
 public interface ApiRequest {
-    public void requestParamValidation() throws RequestParamException;
+    public enum HTTP_METHOD {
+        POST,
+        GET,
+        PUT,
+        DELETE
+    };
+    public void requestParamValidation(HTTP_METHOD method) throws RequestParamException;
     
     public void service() throws ServiceException;
     

@@ -1,8 +1,5 @@
 {
-	"users":{
-		"get":"userInfo",
-		"post":"userCreate"
-	},
+	"users":"Users",
 	"tokens":{
 		"get":"tokenVerify",
 		"post":"tokenIssue",

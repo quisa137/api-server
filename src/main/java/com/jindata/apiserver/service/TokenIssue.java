@@ -29,7 +29,7 @@ public class TokenIssue extends ApiRequestTemplate {
         // TODO Auto-generated constructor stub
     }
 
-    public void requestParamValidation() throws RequestParamException {
+    public void requestParamValidation(HTTP_METHOD method) throws RequestParamException {
         if(StringUtils.isEmpty(this.reqData.get("userNo"))) {
             throw new RequestParamException("userNo가 없습니다");
         }
@@ -74,5 +74,4 @@ public class TokenIssue extends ApiRequestTemplate {
             helper.returnResource(jedis);
         }
     }
-
 }

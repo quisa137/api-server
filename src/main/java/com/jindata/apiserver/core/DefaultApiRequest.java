@@ -6,11 +6,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.jindata.apiserver.service.RequestParamException;
+import com.jindata.apiserver.service.ServiceException;
 
 @Service("notFound")
 @Scope("prototype")
 public class DefaultApiRequest extends ApiRequestTemplate {
-
     public DefaultApiRequest(Map<String, String> reqData) {
         super(reqData);
     }
@@ -19,8 +19,7 @@ public class DefaultApiRequest extends ApiRequestTemplate {
         this.apiResult.addProperty("resultCode", "404");
     }
 
-    public void requestParamValidation() throws RequestParamException {
+    public void requestParamValidation(HTTP_METHOD method) throws RequestParamException {
         // TODO Auto-generated method stub
-        
     }
 }

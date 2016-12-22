@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 
 import com.jindata.apiserver.core.ApiRequestTemplate;
 import com.jindata.apiserver.core.JedisHelper;
+import com.jindata.apiserver.core.ApiRequest.HTTP_METHOD;
 
 import redis.clients.jedis.Jedis;
 
@@ -21,7 +22,7 @@ public class TokenExpire extends ApiRequestTemplate {
         // TODO Auto-generated constructor stub
     }
 
-    public void requestParamValidation() throws RequestParamException {
+    public void requestParamValidation(HTTP_METHOD method) throws RequestParamException {
         if(StringUtils.isEmpty(this.reqData.get("token"))){
             throw new RequestParamException("Token이 없습니다");
         }

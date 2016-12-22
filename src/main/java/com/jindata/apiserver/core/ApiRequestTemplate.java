@@ -26,11 +26,9 @@ public abstract class ApiRequestTemplate implements ApiRequest {
 
     public void executeService() {
         try {
-            this.requestParamValidation();
-            
+            HTTP_METHOD method = HTTP_METHOD.valueOf(this.reqData.get("REQUEST_METHOD"));
+            this.requestParamValidation(method);
             this.service();
-            
-            
         }catch (RequestParamException e) {
             logger.error(e);
             this.apiResult.addProperty("resultCode", "405");
@@ -51,5 +49,9 @@ public abstract class ApiRequestTemplate implements ApiRequest {
     protected void sendError(int httpCode,String message) {
         this.apiResult.addProperty("resultCode", Integer.toString(httpCode));
         this.apiResult.addProperty("message", message);
+    }
+    protected void sendNotFound() {
+        this.apiResult.addProperty("resultCode", "404");
+        this.apiResult.addProperty("message", "Not Found");
     }
 }
