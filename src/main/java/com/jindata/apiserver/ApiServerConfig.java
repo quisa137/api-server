@@ -18,7 +18,6 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 @Configuration
@@ -101,9 +100,9 @@ public class ApiServerConfig {
             String s2 = o2.getKey();
             
             if(s1.length() > s2.length()) {
-                return 1;
-            }else if(s1.length() < s2.length()) {
                 return -1;
+            }else if(s1.length() < s2.length()) {
+                return 1;
             }else{
                 //문자열 길이가 같으면 가나다 오름차순
                 return s1.compareTo(s2);

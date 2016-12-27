@@ -49,7 +49,6 @@ public class Users extends SimpleApiRequestTemplate {
         user.setEmail(reqData.get("email"));
         user.setUsername(reqData.get("username"));
         user.setPassword(reqData.get("password"));
-        
         if(sqlSession.insert("userCreate", user)>0){
             this.sendSuccess();
         };

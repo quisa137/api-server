@@ -31,13 +31,11 @@ public class ServiceDispatcher {
         String beanName = null;
         
         ArrayList<Entry<String, JsonElement>> urimap = (ArrayList<Entry<String, JsonElement>>) springContext.getBean("uriMap");
-        Iterator<Entry<String, JsonElement>> i =urimap.iterator();
         
-        while(i.hasNext()) {
-            Entry<String, JsonElement> e = i.next();
-            if(serviceUri.startsWith("/"+e.getKey())){
+        for (Entry<String, JsonElement> entry : urimap) {
+            if(serviceUri.startsWith("/" + entry.getKey())){
                 String httpMethod = requestMap.get("REQUEST_METHOD").toLowerCase();
-                JsonElement je = e.getValue();
+                JsonElement je = entry.getValue();
                 if(je.isJsonObject()){
                     JsonObject obj = je.getAsJsonObject();
                     

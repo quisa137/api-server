@@ -3,6 +3,7 @@ package com.jindata.apiserver;
 import java.net.InetSocketAddress;
 import java.security.cert.CertificateException;
 
+import javax.annotation.PreDestroy;
 import javax.net.ssl.SSLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +41,11 @@ public class ApiServer {
     @Qualifier("workerThreadCount")
     private int workerThreadCount;
     
+    private static EventLoopGroup bossGroup;
+    private static EventLoopGroup workerGroup;
     public void start() {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup(workerThreadCount);
+        bossGroup = new NioEventLoopGroup(1);
+        workerGroup = new NioEventLoopGroup(workerThreadCount);
         ChannelFuture channelFuture = null;
         
         try {
@@ -81,5 +84,11 @@ public class ApiServer {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+    
+    @PreDestroy
+    public void stop() {
+        bossGroup.shutdownGracefully();
+        workerGroup.shutdownGracefully();
     }
 }

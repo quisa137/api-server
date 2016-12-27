@@ -5,10 +5,6 @@ import org.springframework.context.support.AbstractApplicationContext;
 
 public class ApiServerMain {
 
-    public ApiServerMain() {
-        // TODO Auto-generated constructor stub
-    }
-
     public static void main(String[] args) {
         AbstractApplicationContext springContext = null;
         try {
@@ -16,12 +12,10 @@ public class ApiServerMain {
             springContext.registerShutdownHook();
             
             ApiServer server= springContext.getBean(ApiServer.class);
-            
             server.start();
+            
         } finally {
             springContext.close();
         }
-
     }
-
 }
