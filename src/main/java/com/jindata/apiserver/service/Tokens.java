@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
@@ -15,6 +17,8 @@ import com.jindata.apiserver.service.dao.TokenKey;
 
 import redis.clients.jedis.Jedis;
 
+@Scope("prototype")
+@Service("Tokens")
 public class Tokens extends SimpleApiRequestTemplate{
 private static final JedisHelper helper = JedisHelper.getInstance();
     
@@ -44,7 +48,9 @@ private static final JedisHelper helper = JedisHelper.getInstance();
             }
         }
     }
-
+    /**
+     * 토큰발급
+     */
     @Override
     public void post() throws ServiceException {
         Jedis jedis = null;
@@ -82,6 +88,9 @@ private static final JedisHelper helper = JedisHelper.getInstance();
         }
     }
 
+    /**
+     * 토큰 검증
+     */
     @Override
     public void get() throws ServiceException {
         Jedis conn = null;
@@ -112,6 +121,9 @@ private static final JedisHelper helper = JedisHelper.getInstance();
         
     }
 
+    /**
+     * 토큰 삭제
+     */
     @Override
     public void delete() throws ServiceException {
         // TODO Auto-generated method stub

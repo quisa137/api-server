@@ -3,9 +3,5 @@
 	"user/groups":"UserGroups",
 	"groups":"Groups",
 	"group/users":"GroupUsers",
-	"tokens":{
-		"get":"tokenVerify",
-		"post":"tokenIssue",
-		"delete":"tokenExpirer"
-	}
+	"tokens":"Tokens"
 }

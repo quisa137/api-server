@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="usergroup">
+  <select id="SelectGroupsByUserno">SELECT groupno FROM group_user WHERE userno = #{userno,jdbcType=BIGINT}</select>
+  <select id="SelectUsersBygroupno">SELECT userno FROM group_user WHERE userno = #{groupno,jdbcType=BIGINT}</select>
+</mapper>

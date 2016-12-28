@@ -29,14 +29,17 @@ public class UserGroups extends ApiRequestTemplate {
 
     @Override
     public void requestParamValidation(HTTP_METHOD method) throws RequestParamException {
-        if(StringUtils.isEmpty(this.reqData.get("userno"))){
-            throw new RequestParamException("사용자번호가 없습니다.");
+        if(StringUtils.isEmpty(this.reqData.get("email"))){
+            throw new RequestParamException("이메일이 없습니다.");
+        }
+        if(StringUtils.isEmpty(this.reqData.get("password"))){
+            throw new RequestParamException("암호가 없습니다.");
         }
     }
 
     @Override
     public void service() throws ServiceException {
-        User result = sqlSession.selectOne("users.SelectUserByPK", this.reqData);
+        User result = sqlSession.selectOne("users.userLogin", this.reqData);
         if(result!=null) {
             List<Group> groups = result.getGroups();
             Gson g = new Gson();

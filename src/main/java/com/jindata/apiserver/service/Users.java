@@ -1,5 +1,6 @@
 package com.jindata.apiserver.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.google.gson.Gson;
 import com.jindata.apiserver.core.SimpleApiRequestTemplate;
 import com.jindata.apiserver.service.dto.User;
 
@@ -23,11 +25,6 @@ public class Users extends SimpleApiRequestTemplate {
     @Override
     public void requestParamValidation(HTTP_METHOD method) throws RequestParamException {
         switch(method){
-        case GET:
-            if(StringUtils.isEmpty(reqData.get("email"))){
-                throw new RequestParamException("이메일이 없습니다.");
-            }
-            break;
         case POST:
             if(StringUtils.isEmpty(reqData.get("email"))){
                 throw new RequestParamException("이메일이 없습니다.");
@@ -56,17 +53,24 @@ public class Users extends SimpleApiRequestTemplate {
 
     @Override
     public void get() throws ServiceException {
-        Map<String,String> result = sqlSession.selectOne("users.userInfoByEmail", this.reqData);
-        if(result != null) {
-            String userNo = String.valueOf(result.get("USERNO"));
-            
-            this.apiResult.addProperty("resultCode", "200");
-            this.apiResult.addProperty("message", "Success");
-            this.apiResult.addProperty("userNo", userNo);
+        if(StringUtils.isEmpty(this.reqData.get("email"))){
+            List<User> users = sqlSession.selectList("users.userList",this.reqData);
+            Gson g = new Gson();
+            this.apiResult.add("list", g.toJsonTree(users));
         }else{
-            this.apiResult.addProperty("resultCode", "404");
-            this.apiResult.addProperty("message", "Fail");
+            Map<String,String> result = sqlSession.selectOne("users.userInfoByEmail", this.reqData);
+            if(result != null) {
+                String userNo = String.valueOf(result.get("USERNO"));
+                
+                this.apiResult.addProperty("resultCode", "200");
+                this.apiResult.addProperty("message", "Success");
+                this.apiResult.addProperty("userNo", userNo);
+            }else{
+                this.apiResult.addProperty("resultCode", "404");
+                this.apiResult.addProperty("message", "Fail");
+            }
         }
+        
     }
     
     @Override

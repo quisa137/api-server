@@ -5,12 +5,14 @@ import java.util.List;
 
 import lombok.Data;
 
-@Data public class Group {
-    private long groupno;
+@Data public class Role {
+    private long roleno;
     private String name;
     private String description;
+    private long groupno;
     private long addeduserno;
     private Date writedate;
+    private Group group;
     private List<User> users;
-    private List<Role> roles;
+    private List<Roletarget> targets;
 }

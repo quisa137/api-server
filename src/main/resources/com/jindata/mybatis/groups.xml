@@ -11,16 +11,16 @@
       SELECT userno,username,email FROM users WHERE userno in (SELECT userno FROM group_user WHERE groupno=#{groupno,jdbcType=BIGINT}) 
     </select>
     <select id="selectGroupByPK" resultMap="ResultMapGroups">
-      SELECT groupno,name,`desc` FROM groups WHERE groupno=#{groupno, jdbcType=BIGINT}
+      SELECT groupno,name,description FROM groups WHERE groupno=#{groupno, jdbcType=BIGINT}
     </select>
     <insert id="insertGroup">
-      INSERT into groups(name,`desc`) values (#{name,jdbcType=VARCHAR},#{desc,jdbcType=VARCHAR})
+      INSERT into groups(name,description) values (#{name,jdbcType=VARCHAR},#{desc,jdbcType=VARCHAR})
     </insert>
     <update id="updateGroup">
       UPDATE groups 
         <set>
           <if test="name != null">name=#{name,jdbcType=VARCHAR},</if>
-          <if test="desc != null">`desc`=#{name,jdbcType=VARCHAR},</if>
+          <if test="description != null">description=#{name,jdbcType=VARCHAR},</if>
         </set>
       WHERE groupno=#{groupno, jdbcType=BIGINT}
     </update>
