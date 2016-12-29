@@ -23,8 +23,8 @@ public class UserGroups extends ApiRequestTemplate {
     @Autowired
     private SqlSession sqlSession;
 
-    public UserGroups(Map<String, String> reqData) {
-        super(reqData);
+    public UserGroups(Map<String, String> reqHeader,Map<String, String> reqData) {
+        super(reqHeader,reqData);
     }
 
     @Override

@@ -25,16 +25,16 @@ public class ServiceDispatcher {
 
     protected Logger logger = LogManager.getLogger(this.getClass());
     
-    public static ApiRequest dispatch(Map<String,String> requestMap) {
+    public static ApiRequest dispatch(Map<String,String> requestHeader,Map<String,String> requestBody) {
         
-        String serviceUri = requestMap.get("REQUEST_URI");
+        String serviceUri = requestBody.get("REQUEST_URI");
         String beanName = null;
         
         ArrayList<Entry<String, JsonElement>> urimap = (ArrayList<Entry<String, JsonElement>>) springContext.getBean("uriMap");
         
         for (Entry<String, JsonElement> entry : urimap) {
             if(serviceUri.startsWith("/" + entry.getKey())){
-                String httpMethod = requestMap.get("REQUEST_METHOD").toLowerCase();
+                String httpMethod = requestBody.get("REQUEST_METHOD").toLowerCase();
                 JsonElement je = entry.getValue();
                 if(je.isJsonObject()){
                     JsonObject obj = je.getAsJsonObject();
@@ -61,10 +61,10 @@ public class ServiceDispatcher {
         
         ApiRequest service = null;
         try {
-            service = (ApiRequest) springContext.getBean(beanName, requestMap);
+            service = (ApiRequest) springContext.getBean(beanName, requestHeader, requestBody);
         } catch(Exception e) {
             e.printStackTrace();
-            service = (ApiRequest) springContext.getBean("notFound", requestMap);
+            service = (ApiRequest) springContext.getBean("notFound", requestHeader, requestBody);
         }
         
         return service;

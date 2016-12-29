@@ -19,8 +19,8 @@ public class Users extends SimpleApiRequestTemplate {
     @Autowired
     private SqlSession sqlSession;
     
-    public Users(Map<String, String> reqData) {
-        super(reqData);
+    public Users(Map<String, String> reqHeader,Map<String, String> reqData) {
+        super(reqHeader,reqData);
     }
     @Override
     public void requestParamValidation(HTTP_METHOD method) throws RequestParamException {

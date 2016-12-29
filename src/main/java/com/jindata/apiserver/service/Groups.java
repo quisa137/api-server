@@ -8,8 +8,8 @@ import com.jindata.apiserver.core.SimpleApiRequestTemplate;
 
 public class Groups extends SimpleApiRequestTemplate {
 
-    public Groups(Map<String, String> reqData) {
-        super(reqData);
+    public Groups(Map<String, String> reqHeader,Map<String, String> reqData) {
+        super(reqHeader,reqData);
         // TODO Auto-generated constructor stub
     }
     @Override

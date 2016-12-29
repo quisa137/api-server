@@ -7,8 +7,8 @@ import com.jindata.apiserver.service.ServiceException;
 
 public abstract class SimpleApiRequestTemplate extends ApiRequestTemplate implements SimpleApiRequest {
 
-    public SimpleApiRequestTemplate(Map<String, String> reqData) {
-        super(reqData);
+    public SimpleApiRequestTemplate(Map<String,String> reqHeader,Map<String, String> reqData) {
+        super(reqHeader,reqData);
         // TODO Auto-generated constructor stub
     }
     

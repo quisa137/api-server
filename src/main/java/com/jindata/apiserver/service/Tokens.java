@@ -20,12 +20,12 @@ import redis.clients.jedis.Jedis;
 @Scope("prototype")
 @Service("Tokens")
 public class Tokens extends SimpleApiRequestTemplate{
-private static final JedisHelper helper = JedisHelper.getInstance();
+    private static final JedisHelper helper = JedisHelper.getInstance();
     
     @Autowired
     private SqlSession sqlSession;
-    public Tokens(Map<String, String> reqData) {
-        super(reqData);
+    public Tokens(Map<String, String> reqHeader,Map<String, String> reqData) {
+        super(reqHeader,reqData);
     }
 
     @Override
@@ -68,8 +68,9 @@ private static final JedisHelper helper = JedisHelper.getInstance();
                 token.addProperty("email", email);
                 token.addProperty("userNo", reqData.get("userNo"));
                 
-                //token 저장
-                KeyMaker tokenKey = new TokenKey(email, issueDate);
+                //내부 저장 키
+                KeyMaker tokenKey = new TokenKey(email+issueDate, this.reqData.get("REQUEST_CLIENT_IP"),this.reqHeader.get("User-Agent"));
+                
                 jedis = helper.getConnection();
                 jedis.setex(tokenKey.getKey(), (int) threeHour, token.toString());
                 

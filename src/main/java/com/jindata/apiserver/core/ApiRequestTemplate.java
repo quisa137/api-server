@@ -11,14 +11,15 @@ import com.jindata.apiserver.service.ServiceException;
 
 public abstract class ApiRequestTemplate implements ApiRequest {
     protected Logger logger;
-    
+    protected Map<String,String> reqHeader;
     protected Map<String,String> reqData;
     
     protected JsonObject apiResult;
 
-    public ApiRequestTemplate(Map<String,String> reqData) {
+    public ApiRequestTemplate(Map<String,String> reqHeader, Map<String,String> reqData) {
         this.logger = LogManager.getLogger(this.getClass());
         this.apiResult = new JsonObject();
+        this.reqHeader = reqHeader;
         this.reqData = reqData;
         
         logger.info("request data : " + this.reqData);

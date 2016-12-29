@@ -11,8 +11,8 @@ import com.jindata.apiserver.service.ServiceException;
 @Service("notFound")
 @Scope("prototype")
 public class DefaultApiRequest extends ApiRequestTemplate {
-    public DefaultApiRequest(Map<String, String> reqData) {
-        super(reqData);
+    public DefaultApiRequest(Map<String, String> reqHeader,Map<String, String> reqData) {
+        super(reqHeader, reqData);
     }
 
     public void service() {

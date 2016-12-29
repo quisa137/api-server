@@ -24,8 +24,8 @@ public class TokenIssue extends ApiRequestTemplate {
     @Autowired
     private SqlSession sqlSession;
 
-    public TokenIssue(Map<String, String> reqData) {
-        super(reqData);
+    public TokenIssue(Map<String, String> reqHeader,Map<String, String> reqData) {
+        super(reqHeader,reqData);
         // TODO Auto-generated constructor stub
     }
 
@@ -56,7 +56,7 @@ public class TokenIssue extends ApiRequestTemplate {
                 token.addProperty("userNo", reqData.get("userNo"));
                 
                 //token 저장
-                KeyMaker tokenKey = new TokenKey(email, issueDate);
+                KeyMaker tokenKey = new TokenKey(email, this.reqData.get("REQUEST_CLIENT_IP"),this.reqHeader.get("User-Agent"));
                 jedis = helper.getConnection();
                 jedis.setex(tokenKey.getKey(), (int) threeHour, token.toString());
                 

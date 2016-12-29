@@ -6,8 +6,8 @@ import com.jindata.apiserver.core.ApiRequestTemplate;
 
 public class EsProxy extends ApiRequestTemplate {
 
-    public EsProxy(Map<String, String> reqData) {
-        super(reqData);
+    public EsProxy(Map<String, String> reqHeader,Map<String, String> reqData) {
+        super(reqHeader,reqData);
     }
 
     @Override

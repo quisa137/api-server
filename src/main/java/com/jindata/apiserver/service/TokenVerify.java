@@ -17,8 +17,8 @@ import redis.clients.jedis.Jedis;
 @Scope("prototype")
 public class TokenVerify extends ApiRequestTemplate {
     private static final JedisHelper helper = JedisHelper.getInstance();
-    public TokenVerify(Map<String, String> reqData) {
-        super(reqData);
+    public TokenVerify(Map<String, String> reqHeader,Map<String, String> reqData) {
+        super(reqHeader,reqData);
         // TODO Auto-generated constructor stub
     }
 

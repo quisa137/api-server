@@ -7,6 +7,8 @@ import static io.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -48,6 +50,7 @@ public class ApiRequestParser extends SimpleChannelInboundHandler<FullHttpMessag
     
     private HttpPostRequestDecoder decoder;
     
+    private Map<String,String> reqHeader = new HashMap<String,String>();
     private Map<String,String> reqData = new HashMap<String,String>();
     
     private static final Set<String> usingHeader = new HashSet<String>();
@@ -74,14 +77,14 @@ public class ApiRequestParser extends SimpleChannelInboundHandler<FullHttpMessag
             if(!headers.isEmpty()) {
                 for(Map.Entry<String, String> h: headers) {
                     String key = h.getKey();
-                    if(usingHeader.contains(key)) {
-                        reqData.put(key, h.getValue());
-                    }
+                    reqHeader.put(key, h.getValue());
                 }
             }
+            InetAddress inetAddress = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress();
             
             reqData.put("REQUEST_URI", request.getUri());
             reqData.put("REQUEST_METHOD", request.getMethod().name());
+            reqData.put("REQUEST_CLIENT_IP", inetAddress.getHostAddress());
         }
         
         if (msg instanceof HttpContent) {
@@ -91,7 +94,7 @@ public class ApiRequestParser extends SimpleChannelInboundHandler<FullHttpMessag
                 
                 readPostData();
                 
-                ApiRequest service = ServiceDispatcher.dispatch(reqData);
+                ApiRequest service = ServiceDispatcher.dispatch(reqHeader,reqData);
                 
                 try {
                     service.executeService();

@@ -17,8 +17,8 @@ import redis.clients.jedis.Jedis;
 public class TokenExpire extends ApiRequestTemplate {
     private static final JedisHelper helper = JedisHelper.getInstance();
 
-    public TokenExpire(Map<String, String> reqData) {
-        super(reqData);
+    public TokenExpire(Map<String, String> reqHeader,Map<String, String> reqData) {
+        super(reqHeader,reqData);
         // TODO Auto-generated constructor stub
     }
 

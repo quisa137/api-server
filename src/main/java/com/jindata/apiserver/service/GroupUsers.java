@@ -11,8 +11,8 @@ import com.jindata.apiserver.core.ApiRequestTemplate;
 @Scope("prototype")
 public class GroupUsers extends ApiRequestTemplate {
 
-    public GroupUsers(Map<String, String> reqData) {
-        super(reqData);
+    public GroupUsers(Map<String, String> reqHeader,Map<String, String> reqData) {
+        super(reqHeader,reqData);
         // TODO Auto-generated constructor stub
     }
 
