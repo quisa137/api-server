@@ -43,7 +43,13 @@ public class Login extends ApiRequestTemplate {
             throw new RequestParamException("암호가 없습니다.");
         }
     }
-
+    /**
+     * 로그인을 처리한다.
+     * 1. 아이디/암호를 DB에서 검증
+     * 2. 토큰을 생성
+     * 3. 유저정보를 Redis에 입력
+     * 4. 로그인 시간 기록
+     */
     @Override
     public void service() throws ServiceException {
         Jedis jedis = null;
@@ -69,24 +75,15 @@ public class Login extends ApiRequestTemplate {
                 
                 jedis = helper.getConnection();
                 String loggedUserInfo = jedis.get(tokenKey.getKey());
-                //System.out.println(Crypto.decrypt("qfgOLToXeg2Ha1DOJe5KkXWBuMDKrPtBKOYMICHg7i8="));
-                System.out.println(tokenKey.getKey());
                 
                 if(StringUtils.isEmpty(loggedUserInfo)) {
-                    String access_token = Crypto.encrypt(String.join("_", tokenKey.getKey(),Long.toString(issueDate)));
+                    String access_token = Crypto.encrypt(String.join("_", tokenKey.getKey(),Long.toString(issueDate + threeHour)));
                     token.addProperty("access_token", access_token);
                     jedis.setex(tokenKey.getKey(), (int) threeHour, token.toString());
                     this.apiResult.addProperty("token", access_token);
                 }else{
                     loggedUserInfo = jedis.get(tokenKey.getKey());
                     JsonObject jo = new JsonParser().parse(loggedUserInfo).getAsJsonObject();
-                    
-                    if(jo.get("access_token")==null){
-                        String access_token = Crypto.encrypt(String.join("_", tokenKey.getKey(),Long.toString(issueDate)));
-                        token.addProperty("access_token", access_token);
-                        jedis.setex(tokenKey.getKey(), (int) threeHour, token.toString());
-                        loggedUserInfo = jedis.get(tokenKey.getKey());
-                    }
                     this.apiResult.addProperty("token", jo.get("access_token").getAsString());
                 }
                 this.sendSuccess();
