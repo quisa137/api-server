@@ -9,4 +9,6 @@ import lombok.Data;
     private long userno;
     private Date writedate;
     private long addeduserno;
+    private Group group;
+    private User user;
 }

@@ -3,6 +3,7 @@ package com.jindata.apiserver;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -41,7 +42,11 @@ public class ApiServerConfig {
     @Value("${uri.mapper}")
     private String uriMapperPath;
     
+    @Value("${security.anymousuri}")
+    private String anymousAccessible;
+    
     private List<Entry<String, JsonElement>> uriList = null;
+    private List<String> anymousAccessibleList = null;
     
     @Bean(name="bossThreadCount")
     public int getBossThreadCount() {
@@ -57,7 +62,7 @@ public class ApiServerConfig {
      * @return
      */
     @Bean(name="uriMap")
-    public ArrayList<Entry<String, JsonElement>> getURIMap() {
+    public List<Entry<String, JsonElement>> getURIMap() {
         if(uriList == null) {
             try {
                 JsonElement jelement = new JsonParser().parse(new InputStreamReader(getClass().getResourceAsStream(uriMapperPath)));
@@ -68,15 +73,22 @@ public class ApiServerConfig {
                 e.printStackTrace();
             }
         }
-        return (ArrayList<Entry<String, JsonElement>>) uriList;
+        return uriList;
     }
     
-    public int getTcpPort() {
-        return tcpPort;
+    @Bean(name="anymousAccessible")
+    public String getAnymousAccessible() {
+        return anymousAccessible;
     }
     
-    public int getSslPort() {
-        return sslPort;
+    @Bean(name="accessibleList")
+    public List<String> getAccessibleList() {
+        if(anymousAccessibleList == null) {
+            if(anymousAccessible != null) {
+                anymousAccessibleList = Arrays.asList(anymousAccessible.split(","));
+            }
+        }
+        return anymousAccessibleList;
     }
     
     @Bean(name = "tcpSocketAddress")

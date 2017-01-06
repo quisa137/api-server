@@ -103,6 +103,7 @@ public class ApiRequestParser extends SimpleChannelInboundHandler<FullHttpMessag
                 } finally {
                     reqData.clear();
                 }
+            
                 
                 if(!writeResponse(trailer, ctx)) {
                     ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)

@@ -3,6 +3,8 @@
 	"user/groups":"UserGroups",
 	"groups":"Groups",
 	"group/users":"GroupUsers",
-	"tokens":"Tokens",
-	"login":"Login"
+	"login":"Login",
+	"verify":"TokenVerify"
+	"logout":"Logout",
+	"es":"EsProxy",
 }

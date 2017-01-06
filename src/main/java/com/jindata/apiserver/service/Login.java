@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -47,8 +48,10 @@ public class Login extends ApiRequestTemplate {
      * 로그인을 처리한다.
      * 1. 아이디/암호를 DB에서 검증
      * 2. 토큰을 생성
-     * 3. 유저정보를 Redis에 입력
-     * 4. 로그인 시간 기록
+     * 3. 유저정보를 Hashmap에 입력
+     * 4. hashmap을 json으로 변환
+     * 5. Redis에 입력
+     * 6. 로그인 시간 기록
      */
     @Override
     public void service() throws ServiceException {
@@ -57,17 +60,18 @@ public class Login extends ApiRequestTemplate {
             User result = sqlSession.selectOne("users.userLogin", this.reqData);
             
             if(result!=null) {
-                final long threeHour = 60*60*3; //60*60*3  3시간
+                final long threeHour = 1000 * 60 * 60 * 3; //60*60*3  3시간
                 long issueDate = System.currentTimeMillis();
                 String email = String.valueOf(result.getEmail());
                 
-                JsonObject token = new JsonObject();
-                token.addProperty("issueDate", issueDate);
-                token.addProperty("expireDate", issueDate + threeHour);
-                token.addProperty("email", email);
-                token.addProperty("userNo", result.getUserno());
+                Map<String,Object> expinfo = new HashMap<>();
+                expinfo.put("issueDate", issueDate);
+                expinfo.put("expireDate", issueDate + threeHour);
+                expinfo.put("email", email);
+                expinfo.put("userNo", result.getUserno());
+                expinfo.put("userInfo", new Gson().toJson(result));
                 
-                Map<String,String> param = new HashMap<String,String>();
+                Map<String,String> param = new HashMap<>();
                 param.put("userno", Long.toString(result.getUserno()));
                 sqlSession.update("users.postLogin",param);
                 
@@ -78,8 +82,9 @@ public class Login extends ApiRequestTemplate {
                 
                 if(StringUtils.isEmpty(loggedUserInfo)) {
                     String access_token = Crypto.encrypt(String.join("_", tokenKey.getKey(),Long.toString(issueDate + threeHour)));
-                    token.addProperty("access_token", access_token);
-                    jedis.setex(tokenKey.getKey(), (int) threeHour, token.toString());
+                    expinfo.put("access_token", access_token);
+                    Gson gson = new Gson();
+                    jedis.setex(tokenKey.getKey(), (int) threeHour, gson.toJson(expinfo));
                     this.apiResult.addProperty("token", access_token);
                 }else{
                     loggedUserInfo = jedis.get(tokenKey.getKey());

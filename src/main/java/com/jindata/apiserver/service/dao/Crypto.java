@@ -17,13 +17,13 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
-import org.springframework.security.crypto.keygen.KeyGenerators;
  
 public class Crypto {
     private static String iv;
     private static Key keySpec;
-    //아래의 값이 외부로 반출되면 보안상 큰 문제가 일어난다. 조심할 것
-    private static final String key = "COM.JINDATA.#101_APISERVER";
+    //아래의 2개 값이 외부로 반출되면 보안상 큰 문제가 일어난다. 조심할 것
+    private static final String PASSWORD = "COM.JINDATA.#101_APISERVER";
+    private static final String SALT = "17c8125adaeb5fce"; //KeyGenerators.string().generateKey(); 
     /*
     static {
         iv = key.substring(0, 16);
@@ -66,8 +66,10 @@ public class Crypto {
          * 3. JDK_HOME/jre/lib/security 아래에 파일들을 카피해야 한다.
          * 별도 설정이 필요하나 보안성이 더 높다
          */
-        TextEncryptor encryptor = Encryptors.text(key, KeyGenerators.string().generateKey());
-        return encryptor.encrypt(plaintext);
+        TextEncryptor encryptor = Encryptors.text(PASSWORD, SALT);
+        String encryptText = encryptor.encrypt(plaintext);
+        
+        return encryptText;
     }
  
     //복호화
@@ -93,7 +95,7 @@ public class Crypto {
          * 2. 압축을 풀고
          * 3. JDK_HOME/jre/lib/security 아래에 관련 파일을 카피해야 한다.
          */
-        TextEncryptor decryptor = Encryptors.text(key, KeyGenerators.string().generateKey());
+        TextEncryptor decryptor = Encryptors.text(PASSWORD, SALT);
         return decryptor.decrypt(encryptedtext);
     }
 }

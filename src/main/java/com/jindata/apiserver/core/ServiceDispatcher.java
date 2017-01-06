@@ -2,6 +2,7 @@ package com.jindata.apiserver.core;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -30,7 +31,7 @@ public class ServiceDispatcher {
         String serviceUri = requestBody.get("REQUEST_URI");
         String beanName = null;
         
-        ArrayList<Entry<String, JsonElement>> urimap = (ArrayList<Entry<String, JsonElement>>) springContext.getBean("uriMap");
+        List<Entry<String, JsonElement>> urimap = (ArrayList<Entry<String, JsonElement>>) springContext.getBean("uriMap");
         
         for (Entry<String, JsonElement> entry : urimap) {
             if(serviceUri.startsWith("/" + entry.getKey())){
@@ -61,7 +62,12 @@ public class ServiceDispatcher {
         
         ApiRequest service = null;
         try {
-            service = (ApiRequest) springContext.getBean(beanName, requestHeader, requestBody);
+            if(!beanName.equals("notFound") 
+                    && UriAccessController.isAccessible(requestHeader.get("accessToken"), serviceUri, requestBody.get("REQUEST_METHOD")) == false) {
+                service = (ApiRequest) springContext.getBean("Unauthorized", requestHeader, requestBody);
+            }else{
+                service = (ApiRequest) springContext.getBean(beanName, requestHeader, requestBody);
+            }
         } catch(Exception e) {
             e.printStackTrace();
             service = (ApiRequest) springContext.getBean("notFound", requestHeader, requestBody);

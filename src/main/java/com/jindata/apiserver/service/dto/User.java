@@ -17,4 +17,5 @@ import lombok.Data;
     private long grantuserno;
     private List<Group> groups;
     private List<Role> roles;
+    private List<Roletarget> roletargets;
 }

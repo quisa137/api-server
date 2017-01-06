@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="auth">
-  
+  <select id="SelectTargets">
+    SELECT targetURI 
+    FROM role_target 
+    WHERE roleno in (
+      SELECT roleno 
+      FROM role_user 
+      WHERE userno=#{userno,jdbcType=BIGINT}
+    )
+  </select>
 </mapper>

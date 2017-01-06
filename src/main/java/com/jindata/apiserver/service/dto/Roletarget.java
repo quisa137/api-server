@@ -12,4 +12,5 @@ import lombok.Data;
     private String isDenied;
     private long addeduserno;
     private Date writedate;
+    private Role role;
 }

@@ -15,7 +15,7 @@ public class ApiServerMain {
             server.start();
             
         } finally {
-            springContext.close();
+            if(springContext!=null) springContext.close();
         }
     }
 }

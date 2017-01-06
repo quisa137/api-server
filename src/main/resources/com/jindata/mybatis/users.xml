@@ -4,6 +4,8 @@
     <resultMap type="com.jindata.apiserver.service.dto.User" id="ResultMapUsers">
       <id column="userno" jdbcType="BIGINT" property="userno"/>
       <collection property="groups" column="userno" ofType="com.jindata.apiserver.service.dto.Group" select="SelectGroupByPK"/>
+      <collection property="roles" column="userno" ofType="com.jindata.apiserver.service.dto.Role" select="SelectRoleByPK"/>
+      <collection property="roletargets" column="userno" ofType="com.jindata.apiserver.service.dto.Roletarget" select="SelectRoletargetByPK"/>
     </resultMap>
     <select id="userList" resultType="com.jindata.apiserver.service.dto.User">
       select 
@@ -45,6 +47,13 @@
     
     <select id="SelectGroupByPK" resultType="com.jindata.apiserver.service.dto.Group">
         select groupno, name, description from groups WHERE groupno in (SELECT groupno FROM group_user WHERE userno = #{userno,jdbcType=BIGINT})
+    </select>
+    <select id="SelectRoleByPK" resultType="com.jindata.apiserver.service.dto.Role">
+        select roleno, name, description from roles WHERE groupno in (SELECT groupno FROM group_user WHERE userno = #{userno,jdbcType=BIGINT})
+    </select>
+    <select id="SelectRoletargetByPK" resultType="com.jindata.apiserver.service.dto.Roletarget">
+        SELECT roleauthno,roleno,targetURI,targetMethod,isDenied 
+        FROM role_target WHERE roleno in (SELECT roleno FROM role_user WHERE userno=#{userno,jdbcType=BIGINT})
     </select>
     
     <select id="userInfoByEmail" parameterType="map" resultType="map">

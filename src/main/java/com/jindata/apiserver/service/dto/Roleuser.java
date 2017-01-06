@@ -10,4 +10,7 @@ import lombok.Data;
     private long roleno;
     private Date writedate;
     private long addeduserno;
+    private User user;
+    private Group group;
+    private Role role;
 }
