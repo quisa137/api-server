@@ -10,12 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
-import com.jindata.apiserver.core.SimpleApiRequestTemplate;
+import com.jindata.apiserver.core.RESTApiRequestTemplate;
+import com.jindata.apiserver.core.RequestParamException;
+import com.jindata.apiserver.core.ServiceException;
 import com.jindata.apiserver.service.dto.User;
 
 @Service("Users")
 @Scope("prototype")
-public class Users extends SimpleApiRequestTemplate {
+public class Users extends RESTApiRequestTemplate {
     @Autowired
     private SqlSession sqlSession;
     
@@ -83,5 +85,10 @@ public class Users extends SimpleApiRequestTemplate {
     public void delete() throws ServiceException {
         // TODO Auto-generated method stub
 
+    }
+    @Override
+    public void setId(String id) throws ServiceException {
+        // TODO Auto-generated method stub
+        
     }
 }

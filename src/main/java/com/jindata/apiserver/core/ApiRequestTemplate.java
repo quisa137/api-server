@@ -6,8 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.gson.JsonObject;
-import com.jindata.apiserver.service.RequestParamException;
-import com.jindata.apiserver.service.ServiceException;
 
 public abstract class ApiRequestTemplate implements ApiRequest {
     protected Logger logger;

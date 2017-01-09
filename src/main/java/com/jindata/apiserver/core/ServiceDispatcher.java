@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -29,12 +30,13 @@ public class ServiceDispatcher {
     public static ApiRequest dispatch(Map<String,String> requestHeader,Map<String,String> requestBody) {
         
         String serviceUri = requestBody.get("REQUEST_URI");
-        String beanName = null;
+        String beanName = null,matchedUri = "";;
         
         List<Entry<String, JsonElement>> urimap = (ArrayList<Entry<String, JsonElement>>) springContext.getBean("uriMap");
         
         for (Entry<String, JsonElement> entry : urimap) {
             if(serviceUri.startsWith("/" + entry.getKey())){
+                matchedUri = "/" + entry.getKey();
                 String httpMethod = requestBody.get("REQUEST_METHOD").toLowerCase();
                 JsonElement je = entry.getValue();
                 if(je.isJsonObject()){
@@ -66,6 +68,10 @@ public class ServiceDispatcher {
                     && UriAccessController.isAccessible(requestHeader.get("accessToken"), serviceUri, requestBody.get("REQUEST_METHOD")) == false) {
                 service = (ApiRequest) springContext.getBean("Unauthorized", requestHeader, requestBody);
             }else{
+                String restOfuri = serviceUri.replace(matchedUri, "");
+                if(service instanceof RESTApiRequestTemplate && !StringUtils.isEmpty(restOfuri)) {
+                    ((RESTApiRequestTemplate) service).setId(serviceUri.replace(matchedUri, ""));
+                }
                 service = (ApiRequest) springContext.getBean(beanName, requestHeader, requestBody);
             }
         } catch(Exception e) {

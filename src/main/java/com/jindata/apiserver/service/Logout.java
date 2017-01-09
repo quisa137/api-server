@@ -8,6 +8,8 @@ import org.springframework.util.StringUtils;
 
 import com.jindata.apiserver.core.ApiRequestTemplate;
 import com.jindata.apiserver.core.JedisHelper;
+import com.jindata.apiserver.core.RequestParamException;
+import com.jindata.apiserver.core.ServiceException;
 import com.jindata.apiserver.service.dao.Crypto;
 
 import redis.clients.jedis.Jedis;
@@ -39,6 +41,7 @@ public class Logout extends ApiRequestTemplate{
         Jedis jedis = helper.getConnection();
         
         if(jedis.del(hashkey) == 1){
+            helper.returnResource(jedis);
             this.sendSuccess();
         }else{
             this.sendError(500, "로그아웃 실패");

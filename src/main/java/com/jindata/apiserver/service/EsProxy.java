@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.jindata.apiserver.core.ApiRequestTemplate;
+import com.jindata.apiserver.core.RequestParamException;
+import com.jindata.apiserver.core.ServiceException;
 
 @Scope("prototype")
 @Service("EsProxy")

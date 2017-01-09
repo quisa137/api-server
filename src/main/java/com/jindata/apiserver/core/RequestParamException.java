@@ -1,4 +1,4 @@
-package com.jindata.apiserver.service;
+package com.jindata.apiserver.core;
 
 public class RequestParamException extends Exception {
 

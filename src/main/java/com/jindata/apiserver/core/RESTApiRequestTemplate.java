@@ -2,12 +2,9 @@ package com.jindata.apiserver.core;
 
 import java.util.Map;
 
-import com.jindata.apiserver.service.RequestParamException;
-import com.jindata.apiserver.service.ServiceException;
+public abstract class RESTApiRequestTemplate extends ApiRequestTemplate implements RESTApiRequest {
 
-public abstract class SimpleApiRequestTemplate extends ApiRequestTemplate implements SimpleApiRequest {
-
-    public SimpleApiRequestTemplate(Map<String,String> reqHeader,Map<String, String> reqData) {
+    public RESTApiRequestTemplate(Map<String,String> reqHeader,Map<String, String> reqData) {
         super(reqHeader,reqData);
         // TODO Auto-generated constructor stub
     }

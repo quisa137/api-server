@@ -11,6 +11,8 @@ import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
 import com.jindata.apiserver.service.dao.Crypto;
+import com.jindata.apiserver.service.dao.TokenUtil;
+import com.jindata.apiserver.service.dao.TokenUtil.TokenInfo;
 import com.jindata.apiserver.service.dto.Roletarget;
 import com.jindata.apiserver.service.dto.User;
 
@@ -30,11 +32,6 @@ public class UriAccessController {
         
         List<String> anymousAccessibles = (List<String>) springContext.getBean("accessibleList");
         
-        for(String accesible:anymousAccessibles){
-            if(uri.equals(accesible)){
-                return true;
-            }
-        }
         if(StringUtils.isEmpty(method)) {
             method = "all";
         }
@@ -42,30 +39,18 @@ public class UriAccessController {
         if(StringUtils.isEmpty(token)||StringUtils.isEmpty(uri)) {
             return false;
         }
-        
-        //token을 복호화하고 정보를 분류함
-        String[] keys = Crypto.decrypt(token).split("_");
-        if(keys==null || keys.length != 2) {
-            return false;
-        }
-        String hashKey = keys[0], expireDate = keys[1];
-        
-        //기간이 지난 token인지 확인
-        if(Long.parseLong(expireDate) < System.currentTimeMillis()){
-            return false;
-        }        
-        
-        //jedis에 연결 후, 정보가 있는지 확인
-        Jedis jedis = helper.getConnection();
-        String userInfoText = jedis.get(hashKey);
-        if(StringUtils.isEmpty(userInfoText)) {
-            return false;
+
+        for(String accesible:anymousAccessibles){
+            if(uri.equals(accesible)){
+                return true;
+            }
         }
         
-        Gson gson =  new Gson();
-        
-        HashMap<String,Object> userinfoMap = gson.fromJson(userInfoText,HashMap.class);
-        User userinfo = gson.fromJson((String) userinfoMap.get("userInfo"), User.class);
+        TokenUtil tokenutil = new TokenUtil(token);
+        if(!tokenutil.isVaild()){
+            return false;
+        }
+        User userinfo = tokenutil.getUser();
         List<Roletarget> targets = userinfo.getRoletargets();
         
         if(targets==null) {

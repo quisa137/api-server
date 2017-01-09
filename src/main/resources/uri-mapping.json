@@ -2,9 +2,10 @@
 	"users":"Users",
 	"user/groups":"UserGroups",
 	"groups":"Groups",
-	"group/users":"GroupUsers",
 	"login":"Login",
-	"verify":"TokenVerify"
+	"verify":"TokenVerify",
 	"logout":"Logout",
 	"es":"EsProxy",
+	"admin/users":"AdminUser",
+	"admin/groups":"AdminGroup"
 }

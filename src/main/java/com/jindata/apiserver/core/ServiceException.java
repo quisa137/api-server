@@ -1,4 +1,4 @@
-package com.jindata.apiserver.service;
+package com.jindata.apiserver.core;
 
 public class ServiceException extends Exception {
     private static final long serialVersionUID = -4348772544782321023L;

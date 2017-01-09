@@ -8,7 +8,10 @@ import org.springframework.util.StringUtils;
 
 import com.jindata.apiserver.core.ApiRequestTemplate;
 import com.jindata.apiserver.core.JedisHelper;
+import com.jindata.apiserver.core.RequestParamException;
+import com.jindata.apiserver.core.ServiceException;
 import com.jindata.apiserver.service.dao.Crypto;
+import com.jindata.apiserver.service.dao.TokenUtil;
 
 import redis.clients.jedis.Jedis;
 
@@ -27,32 +30,13 @@ public class TokenVerify extends ApiRequestTemplate {
     }
 
     public void service() throws ServiceException {
-        String accessToken = this.reqHeader.get("accessToken");
-        String plaintext = Crypto.decrypt(accessToken);
+        TokenUtil tokenutil = new TokenUtil(this.reqHeader.get("accessToken"));
         
-        if(StringUtils.isEmpty(plaintext)){
-            this.sendError(403, "Token Error");
+        if(tokenutil.isVaild()){
+            this.sendSuccess();
+            this.apiResult.addProperty("message", "This Token is useable");
+        }else{
+            this.sendError(403, tokenutil.getError());
         }
-        
-        String[] temp = plaintext.split("_");
-        if(temp.length != 2){
-            this.sendError(403, "Token Error");
-            return;
-        }
-        String hashKey = temp[0], expireDate = temp[1];
-        
-        Jedis jedis = helper.getConnection();
-        
-        if(Long.parseLong(expireDate) < System.currentTimeMillis()){
-            this.sendError(403, "Token Expired");
-        }
-        
-        if(jedis.exists(hashKey)==false){
-            this.sendError(403, "Token Error");
-        }
-        
-        this.sendSuccess();
-        this.apiResult.addProperty("message", "This Token is useable");
     }
-
 }

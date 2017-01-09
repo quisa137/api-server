@@ -5,9 +5,6 @@ import java.util.Map;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.jindata.apiserver.service.RequestParamException;
-import com.jindata.apiserver.service.ServiceException;
-
 @Service("notFound")
 @Scope("prototype")
 public class DefaultApiRequest extends ApiRequestTemplate {

@@ -5,9 +5,6 @@ import java.util.Map;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.jindata.apiserver.service.RequestParamException;
-import com.jindata.apiserver.service.ServiceException;
-
 @Service("Unauthorized")
 @Scope("prototype")
 public class UnauthorizedApiRequest extends ApiRequestTemplate {
