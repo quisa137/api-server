@@ -11,9 +11,11 @@ CREATE TABLE IF NOT EXISTS `users` (
   `lastLogin` timestamp NULL DEFAULT NULL,
   `writedate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `grantuserno` bigint(20) DEFAULT NULL,
+  `usertype` char(1) DEFAULT 'U' COMMENT 'A: 관리자, M: 계정 담당자, U: 사용자',
   PRIMARY KEY (`userno`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE IF NOT EXISTS `groups` (
   `groupno` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -22,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `groups` (
   `addeduserno` bigint(20) DEFAULT NULL,
   `writedate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`groupno`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE IF NOT EXISTS `roles` (
@@ -58,6 +60,7 @@ CREATE TABLE IF NOT EXISTS `role_target` (
   `isDenied` char(1) DEFAULT 'Y',
   `addeduserno` bigint(20) DEFAULT NULL,
   `writedate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `permission` bigint(20) DEFAULT '0' COMMENT '0:권한없음,1:실행,2:읽기,4:쓰기,8:삭제,16:양도가능, 권한은 이 숫자들의 합으로 나타낸다.',
   PRIMARY KEY (`roleauthno`),
   KEY `fk_role_target_roleno_idx` (`roleno`),
   CONSTRAINT `fk_role_target_roleno` FOREIGN KEY (`roleno`) REFERENCES `roles` (`roleno`) ON DELETE NO ACTION ON UPDATE NO ACTION

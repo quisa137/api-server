@@ -13,4 +13,5 @@ import lombok.Data;
     private long addeduserno;
     private Date writedate;
     private Role role;
+    private long permission;
 }

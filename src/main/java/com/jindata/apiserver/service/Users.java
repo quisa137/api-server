@@ -21,6 +21,7 @@ public class Users extends RESTApiRequestTemplate {
     @Autowired
     private SqlSession sqlSession;
     
+    private String userno = "";
     public Users(Map<String, String> reqHeader,Map<String, String> reqData) {
         super(reqHeader,reqData);
     }
@@ -72,23 +73,23 @@ public class Users extends RESTApiRequestTemplate {
                 this.apiResult.addProperty("message", "Fail");
             }
         }
-        
     }
     
     @Override
     public void put() throws ServiceException {
-        // TODO Auto-generated method stub
-
+        
     }
 
     @Override
     public void delete() throws ServiceException {
-        // TODO Auto-generated method stub
-
+        if(sqlSession.delete("users.deleteByEmail",this.reqData) > 0) {
+            this.apiResult.addProperty("resultCode", "200");
+            this.apiResult.addProperty("message", "Success");
+        }
     }
     @Override
     public void setId(String id) throws ServiceException {
-        // TODO Auto-generated method stub
-        
+        this.reqData.put("userno", id);
+        this.userno = id;
     }
 }

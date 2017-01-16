@@ -1,26 +1,9 @@
 package com.jindata.apiserver.service.dao;
 
-import java.io.UnsupportedEncodingException;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
- 
-import javax.crypto.Cipher;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
- 
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
  
 public class Crypto {
-    private static String iv;
-    private static Key keySpec;
     //아래의 2개 값이 외부로 반출되면 보안상 큰 문제가 일어난다. 조심할 것
     private static final String PASSWORD = "COM.JINDATA.#101_APISERVER";
     private static final String SALT = "17c8125adaeb5fce"; //KeyGenerators.string().generateKey(); 

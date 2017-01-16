@@ -36,16 +36,16 @@ public class UriAccessController {
             method = "all";
         }
         
-        if(StringUtils.isEmpty(token)||StringUtils.isEmpty(uri)) {
-            return false;
-        }
-
         for(String accesible:anymousAccessibles){
             if(uri.equals(accesible)){
                 return true;
             }
         }
         
+        if(StringUtils.isEmpty(token)||StringUtils.isEmpty(uri)) {
+            return false;
+        }
+
         TokenUtil tokenutil = new TokenUtil(token);
         if(!tokenutil.isVaild()){
             return false;

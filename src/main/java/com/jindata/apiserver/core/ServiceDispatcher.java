@@ -1,7 +1,7 @@
 package com.jindata.apiserver.core;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -19,6 +19,7 @@ import com.google.gson.JsonObject;
 @Component
 public class ServiceDispatcher {
     private static ApplicationContext springContext;
+    private static HashMap<String,String> matchedHistory = new HashMap<>();
     
     @Autowired
     public void init(ApplicationContext springContext) {
@@ -34,27 +35,31 @@ public class ServiceDispatcher {
         
         List<Entry<String, JsonElement>> urimap = (ArrayList<Entry<String, JsonElement>>) springContext.getBean("uriMap");
         
-        for (Entry<String, JsonElement> entry : urimap) {
-            if(serviceUri.startsWith("/" + entry.getKey())){
-                matchedUri = "/" + entry.getKey();
-                String httpMethod = requestBody.get("REQUEST_METHOD").toLowerCase();
-                JsonElement je = entry.getValue();
-                if(je.isJsonObject()){
-                    JsonObject obj = je.getAsJsonObject();
-                    
-                    if(obj.has(httpMethod)){
-                        beanName = obj.get(httpMethod).getAsString();
-                    }else if(obj.has("default")){
-                        beanName = obj.get("default").getAsString();
-                    }else{
+        if(matchedHistory.containsKey(serviceUri)){
+            beanName = matchedHistory.get(serviceUri);
+        }else{
+            for (Entry<String, JsonElement> entry : urimap) {
+                if(serviceUri.startsWith("/" + entry.getKey())){
+                    matchedUri = "/" + entry.getKey();
+                    String httpMethod = requestBody.get("REQUEST_METHOD").toLowerCase();
+                    JsonElement je = entry.getValue();
+                    if(je.isJsonObject()) {
+                        JsonObject obj = je.getAsJsonObject();
+                        
+                        if(obj.has(httpMethod)){
+                            beanName = obj.get(httpMethod).getAsString();
+                        }else if(obj.has("default")){
+                            beanName = obj.get("default").getAsString();
+                        }else{
+                            beanName = "notFound";
+                        }
+                    }else if(je.isJsonPrimitive()) {
+                        beanName = je.getAsString();
+                    }else {
                         beanName = "notFound";
                     }
-                }else if(je.isJsonPrimitive()){
-                    beanName = je.getAsString();
-                }else{
-                    beanName = "notFound";
+                    break;
                 }
-                break;
             }
         }
 
@@ -72,6 +77,7 @@ public class ServiceDispatcher {
                 if(service instanceof RESTApiRequestTemplate && !StringUtils.isEmpty(restOfuri)) {
                     ((RESTApiRequestTemplate) service).setId(serviceUri.replace(matchedUri, ""));
                 }
+                matchedHistory.put(serviceUri, beanName);
                 service = (ApiRequest) springContext.getBean(beanName, requestHeader, requestBody);
             }
         } catch(Exception e) {

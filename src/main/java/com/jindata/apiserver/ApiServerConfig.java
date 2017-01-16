@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -24,7 +25,8 @@ import com.google.gson.JsonSyntaxException;
 @Configuration
 @PropertySource("classpath:api-server.properties")
 @PropertySource("classpath:jdbc.properties")
-@ImportResource("classpath:spring/mysqlApplicationContext.xml")
+@ImportResource("classpath:spring/ApplicationContext.xml")
+
 @ComponentScan("com.jindata.apiserver, com.jindata.apiserver.core, com.jindata.apiserver.service")
 public class ApiServerConfig {
     @Value("${boss.thread.count}")
