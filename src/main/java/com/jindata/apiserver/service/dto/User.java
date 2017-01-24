@@ -5,7 +5,7 @@ import java.util.List;
 
 import lombok.Data;
 
-@Data public class User {
+@Data public class User extends AbstractDto{
     private enum USERTYPE {ADMIN,MANAGER,USER};
     private long userno;
     private String username;

@@ -2,6 +2,8 @@ package com.jindata.apiserver.service;
 
 import java.util.Map;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -33,6 +35,9 @@ public class Logout extends ApiRequestTemplate{
     @Override
     public void service() throws ServiceException {
         String[] plainText = Crypto.decrypt(this.reqHeader.get("accessToken")).split("_");
+        Subject currentUser = SecurityUtils.getSubject();
+        currentUser.logout();
+        
         if(plainText.length!=2){
             throw new ServiceException("잘못된 토큰입니다.");
         }

@@ -29,7 +29,7 @@
     </select>
     <insert id="userCreate" parameterType="com.jindata.apiserver.service.dto.User" flushCache="true" statementType="PREPARED">
         insert into users (username,password,email,isdeleted) 
-        values (#{username,javaType=String,jdbcType=VARCHAR},password(#{password,javaType=String,jdbcType=VARCHAR}),#{email,javaType=String,jdbcType=VARCHAR},'N')
+        values (#{username,javaType=String,jdbcType=VARCHAR},#{password,javaType=String,jdbcType=VARCHAR},#{email,javaType=String,jdbcType=VARCHAR},'N')
     </insert>    
     <update id="userUpdate">
         update users
@@ -52,7 +52,7 @@
         select roleno, name, description from roles WHERE groupno in (SELECT groupno FROM group_user WHERE userno = #{userno,jdbcType=BIGINT})
     </select>
     <select id="SelectRoletargetByPK" resultType="com.jindata.apiserver.service.dto.Roletarget">
-        SELECT roleauthno,roleno,targetURI,targetMethod,isDenied 
+        SELECT * 
         FROM role_target WHERE roleno in (SELECT roleno FROM role_user WHERE userno=#{userno,jdbcType=BIGINT})
     </select>
     
@@ -63,7 +63,13 @@
     <select id="userLogin" parameterType="map" resultType="com.jindata.apiserver.service.dto.User" resultMap="ResultMapUsers">
       select *
       from users 
-      where email=#{email,jdbcType=VARCHAR} and password=password(#{password,jdbcType=VARCHAR}) and isdeleted='N' AND isEmailAuth='Y'
+      where email=#{email,jdbcType=VARCHAR} and password=#{password,jdbcType=VARCHAR} and isdeleted='N' AND isEmailAuth='Y'
+    </select>
+    
+    <select id="getInfoByuserno" parameterType="map" resultType="com.jindata.apiserver.service.dto.User" resultMap="ResultMapUsers">
+      select *
+      from users 
+      where userno=#{userno,jdbcType=BIGINT} and isdeleted='N' AND isEmailAuth='Y'
     </select>
     
     <update id="postLogin">

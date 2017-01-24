@@ -47,6 +47,12 @@ public class ApiServerConfig {
     @Value("${security.anymousuri}")
     private String anymousAccessible;
     
+    @Value("${security.salt}")
+    private String apiserverSalt;
+    
+    @Value("${session.retentiontime}")
+    private int sessionRetentionTime;
+    
     private List<Entry<String, JsonElement>> uriList = null;
     private List<String> anymousAccessibleList = null;
     
@@ -78,9 +84,19 @@ public class ApiServerConfig {
         return uriList;
     }
     
+    @Bean(name="apiserverSalt")
+    public String getSecuritysalt() {
+        return apiserverSalt;
+    }
+    
     @Bean(name="anymousAccessible")
     public String getAnymousAccessible() {
         return anymousAccessible;
+    }
+    
+    @Bean(name = "sessionRetentionTime")
+    public int getSessionRetentionTime() {
+        return sessionRetentionTime;
     }
     
     @Bean(name="accessibleList")
@@ -102,7 +118,7 @@ public class ApiServerConfig {
     public InetSocketAddress sslPort() {
         return new InetSocketAddress(sslPort);
     }
-    
+        
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();

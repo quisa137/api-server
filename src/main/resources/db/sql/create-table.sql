@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `role_target` (
   `isDenied` char(1) DEFAULT 'Y',
   `addeduserno` bigint(20) DEFAULT NULL,
   `writedate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `permission` bigint(20) DEFAULT '0' COMMENT '0:권한없음,1:실행,2:읽기,4:쓰기,8:삭제,16:양도가능, 권한은 이 숫자들의 합으로 나타낸다.',
+  `permission` bigint(20) DEFAULT '0' COMMENT '0:권한없음,1:프로세스 실행,2:읽기,4:쓰기,8:삭제,16:양도가능, 권한은 이 숫자들의 합으로 나타낸다.',
   PRIMARY KEY (`roleauthno`),
   KEY `fk_role_target_roleno_idx` (`roleno`),
   CONSTRAINT `fk_role_target_roleno` FOREIGN KEY (`roleno`) REFERENCES `roles` (`roleno`) ON DELETE NO ACTION ON UPDATE NO ACTION

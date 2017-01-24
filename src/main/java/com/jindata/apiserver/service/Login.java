@@ -1,21 +1,21 @@
 package com.jindata.apiserver.service;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.CredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jindata.apiserver.core.ApiRequestTemplate;
@@ -25,7 +25,6 @@ import com.jindata.apiserver.core.RequestParamException;
 import com.jindata.apiserver.core.ServiceException;
 import com.jindata.apiserver.service.dao.Crypto;
 import com.jindata.apiserver.service.dao.TokenKey;
-import com.jindata.apiserver.service.dto.User;
 
 import redis.clients.jedis.Jedis;
 
@@ -34,8 +33,17 @@ import redis.clients.jedis.Jedis;
 public class Login extends ApiRequestTemplate {
     @Autowired
     private SqlSession sqlSession;
-    private static final JedisHelper helper = JedisHelper.getInstance();
+    
+    @Autowired
+    @Qualifier("apiserverSalt")
+    private String apiserverSalt;
+    
+    @Autowired
+    @Qualifier("sessionRetentionTime")
+    private int sessionRetentionTime;
 
+    private JedisHelper helper = JedisHelper.getInstance();
+    
     public Login(Map<String, String> reqHeader,Map<String, String> reqData) {
         super(reqHeader,reqData);
         // TODO Auto-generated constructor stub
@@ -61,50 +69,55 @@ public class Login extends ApiRequestTemplate {
      */
     @Override
     public void service() throws ServiceException {
-        Jedis jedis = null;
+        Jedis jedis = helper.getConnection();
         try{
-            User result = sqlSession.selectOne("users.userLogin", this.reqData);
+            String email = this.reqData.get("email");
+            KeyMaker tokenKey = new TokenKey(email, this.reqData.get("REQUEST_CLIENT_IP"),this.reqHeader.get("User-Agent"));
+            String hashKey = tokenKey.getKey();
+            String access_token = "";
             
-            if(result!=null) {
-                final long threeHour = 1000 * 60 * 60 * 3; //60*60*3  3시간
-                long issueDate = System.currentTimeMillis();
-                String email = String.valueOf(result.getEmail());
+            Subject currentUser = SecurityUtils.getSubject();
+            
+            Sha256Hash hashkey = new Sha256Hash(this.reqData.get("password"),apiserverSalt);
+            
+            UsernamePasswordToken pwdToken = new UsernamePasswordToken(email, hashkey.toString(),hashKey);
+            pwdToken.setRememberMe(true);
+            
+            currentUser.login(pwdToken);
+            
+            if(currentUser.isAuthenticated()) {
+                this.reqData.put("password", hashkey.toString());
                 
-                Map<String,Object> expinfo = new HashMap<>();
-                expinfo.put("issueDate", issueDate);
-                expinfo.put("expireDate", issueDate + threeHour);
-                expinfo.put("email", email);
-                expinfo.put("userNo", result.getUserno());
-                expinfo.put("userInfo", new Gson().toJson(result));
-                
-                Map<String,String> param = new HashMap<>();
-                param.put("userno", Long.toString(result.getUserno()));
-                sqlSession.update("users.postLogin",param);
-                
-                KeyMaker tokenKey = new TokenKey(email, this.reqData.get("REQUEST_CLIENT_IP"),this.reqHeader.get("User-Agent"));
-                
-                jedis = helper.getConnection();
-                String loggedUserInfo = jedis.get(tokenKey.getKey());
-                
-                if(StringUtils.isEmpty(loggedUserInfo)) {
-                    String access_token = Crypto.encrypt(String.join("_", tokenKey.getKey(),Long.toString(issueDate + threeHour)));
-                    expinfo.put("access_token", access_token);
-                    Gson gson = new Gson();
-                    jedis.setex(tokenKey.getKey(), (int) threeHour, gson.toJson(expinfo));
+                if(jedis.exists(pwdToken.getHost())) {
+                    String infoText = jedis.get(hashKey);
+                    JsonObject userinfo = new JsonParser().parse(infoText).getAsJsonObject();
+                    long issueDate = System.currentTimeMillis();
+                    long expireDate = userinfo.get("expireDate").getAsLong();
+                    
+                    if(expireDate == 0 || expireDate < issueDate){
+                        long newExpireDate = issueDate+sessionRetentionTime;
+                        access_token = Crypto.encrypt(String.join("_", tokenKey.getKey(),Long.toString(newExpireDate)));
+                        userinfo.addProperty("accessToken", access_token);
+                        userinfo.addProperty("issueDate", issueDate);
+                        userinfo.addProperty("expireDate", newExpireDate);
+                        jedis.setex(hashKey,sessionRetentionTime, userinfo.toString());
+                    }else{
+                        access_token = userinfo.get("accessToken").getAsString();
+                    }
                     this.apiResult.addProperty("token", access_token);
-                }else{
-                    loggedUserInfo = jedis.get(tokenKey.getKey());
-                    JsonObject jo = new JsonParser().parse(loggedUserInfo).getAsJsonObject();
-                    this.apiResult.addProperty("token", jo.get("access_token").getAsString());
                 }
                 this.sendSuccess();
             }
-            
-            helper.returnResource(jedis);
+        }catch(AccountException e){
+            this.sendError(400, "Could not Find Account");
+        }catch(CredentialsException e){
+            this.sendError(400, "Password isn`t Collect");
+        }catch(AuthenticationException e){
+            this.sendError(400, e.getMessage());
         }catch(Exception e){
+            this.sendError(500, "Error in login process"+e.getMessage());
+        }finally{
             helper.returnResource(jedis);
-            this.sendError(500, "로그인 중에 에러가 발생했습니다."+e.getMessage());
         }
-
     }
 }

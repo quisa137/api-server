@@ -6,7 +6,7 @@
         http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-4.1.xsd">
-        <bean id="apiserverRealm" class="org.apache.shiro.realm.jdbc.JdbcRealm"/>
+        <bean id="apiserverRealm" class="com.jindata.apiserver.service.dao.ApiServerRealm"/>
         <bean id="securityManager" class="org.apache.shiro.mgt.DefaultSecurityManager">
           <property name="realm" ref="apiserverRealm"/>
         </bean>

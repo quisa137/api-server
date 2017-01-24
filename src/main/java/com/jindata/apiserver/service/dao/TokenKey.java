@@ -24,6 +24,11 @@ public class TokenKey implements KeyMaker {
         this.requestClientIP = requestClientIP;
         this.userAgent = userAgent;
     }
+    
+    public TokenKey(String email, String requestClientIP) {
+        this.email = email;
+        this.requestClientIP = requestClientIP;
+    }
 
     public String getKey() {
         return Long.toString(MurmurHash.hash64A(String.join("_", email,requestClientIP,userAgent).getBytes(), SEED_MURMURHASH), 16);
